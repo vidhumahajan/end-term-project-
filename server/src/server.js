@@ -37,3 +37,25 @@ try {
   console.error('Database connection failed:', error.message);
   process.exit(1);
 }
+const port = process.env.PORT || 5000;
+
+if (!process.env.MONGODB_URI) {
+  throw new Error('MONGODB_URI is missing');
+}
+
+// reuse the DB connection across serverless calls
+let conn = null;
+async function connectDB() {
+  if (!conn) conn = mongoose.connect(process.env.MONGODB_URI);
+  return conn;
+}
+app.use(async (_req, _res, next) => {
+  try { await connectDB(); next(); } catch (err) { next(err); }
+});
+
+// only start a server locally, Vercel runs the exported app
+if (!process.env.VERCEL) {
+  connectDB().then(() => app.listen(port, () => console.log(`API on ${port}`)));
+}
+
+export default app;
