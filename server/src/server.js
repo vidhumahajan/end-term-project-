@@ -21,22 +21,7 @@ app.use('/api', taskRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-const port = process.env.PORT || 5000;
-if (!process.env.MONGODB_URI) {
-  console.error('MONGODB_URI is required. Copy server/.env.example to server/.env.');
-  process.exit(1);
-}
-if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 24) {
-  console.error('JWT_SECRET is required and should be at least 24 characters.');
-  process.exit(1);
-}
-try {
-  await mongoose.connect(process.env.MONGODB_URI);
-  app.listen(port, () => console.log(`SprintBoard API listening on port ${port}`));
-} catch (error) {
-  console.error('Database connection failed:', error.message);
-  process.exit(1);
-}
+
 const port = process.env.PORT || 5000;
 
 if (!process.env.MONGODB_URI) {
